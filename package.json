@@ -1,0 +1,14 @@
+{
+  "name": "load-examples",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server_that_queues_task_then_responds.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "redis": "^2.7.1"
+  }
+}
