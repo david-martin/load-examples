@@ -19,9 +19,11 @@ var server = http.createServer(function handleRequest(req, res) {
   client.lpush(REDIS_TASKS_QUEUE, data, function(err) {
     if (err) {
       console.error('Error pushing to %s', REDIS_TASKS_QUEUE, err);
-      return res.send(500);
+      res.statusCode = 500;
+      return res.end();
     }
-    res.send(201);
+    res.statusCode = 201;
+    res.end();
   });
 });
 
@@ -31,11 +33,17 @@ server.listen(PORT, function() {
 
 
 function checkForTask() {
-  client.brpop(REDIS_TASKS_QUEUE, 0, function(err, data) {
-    console.log('got task from %s', REDIS_TASKS_QUEUE);
+  client.rpop(REDIS_TASKS_QUEUE, function(err, data) {
+    if (err || !data) {
+      if (err) {
+        console.error('Error getting task from %s', REDIS_TASKS_QUEUE, err);
+      }
+      return setTimeout(checkForTask, TASKS_INTERVAL);
+    }
+    // console.log('got task from %s', REDIS_TASKS_QUEUE, err, data);
     var hash = slowHash(data);
     client.lpush(REDIS_RESULTS_QUEUE, hash, function() {
-      console.log('pushed result onto %s', REDIS_RESULTS_QUEUE);
+      // console.log('pushed result onto %s', REDIS_RESULTS_QUEUE);
       setTimeout(checkForTask, TASKS_INTERVAL);
     });
   });
