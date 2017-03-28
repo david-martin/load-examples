@@ -22,7 +22,7 @@ var server = http.createServer(function handleRequest(req, res) {
       res.statusCode = 500;
       return res.end();
     }
-    res.statusCode = 201;
+    res.statusCode = 202;
     res.end();
   });
 });
